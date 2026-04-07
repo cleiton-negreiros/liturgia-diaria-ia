@@ -12,6 +12,9 @@ const tailwindColors = Object.fromEntries(
   ]),
 );
 
+// Add secondary color as tint for compatibility
+tailwindColors.tint = tailwindColors.primary;
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
