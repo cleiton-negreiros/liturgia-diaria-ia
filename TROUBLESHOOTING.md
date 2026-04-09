@@ -118,3 +118,90 @@ Se o problema persistir, me avise com:
 - A mensagem de erro completa
 - Resultado de `node --version`, `npm --version`, `pnpm --version`
 - O que você estava tentando fazer quando o erro ocorreu
+
+
+---
+
+## Erro: Port NaN is being used by another process
+
+Se você receber este erro ao executar `npm run dev`:
+
+```
+Port NaN is being used by another process
+Input is required, but 'npx expo' is in non-interactive mode.
+Required input:
+> Use port 11000 instead?
+Skipping dev server
+```
+
+Isso significa que a porta `8081` (padrão) já está sendo usada por outro processo.
+
+### ✅ Solução 1: Usar uma porta diferente (Recomendado)
+
+A forma mais simples é usar uma porta diferente:
+
+```cmd
+set EXPO_PORT=3000
+npm run dev
+```
+
+Depois acesse: **http://localhost:3000/**
+
+Ou você pode usar qualquer outra porta (5000, 8000, 9000, etc.):
+
+```cmd
+set EXPO_PORT=5000
+npm run dev
+```
+
+### ✅ Solução 2: Liberar a porta 8081
+
+Se você quer usar a porta 8081 especificamente:
+
+1. **Descubra qual processo está usando a porta**:
+   ```cmd
+   netstat -ano | findstr :8081
+   ```
+
+   Você verá algo como:
+   ```
+   TCP    0.0.0.0:8081    0.0.0.0:0    LISTENING    1234
+   ```
+
+   O número `1234` é o PID (Process ID).
+
+2. **Mate o processo**:
+   ```cmd
+   taskkill /PID 1234 /F
+   ```
+
+3. **Tente novamente**:
+   ```cmd
+   npm run dev
+   ```
+
+### ✅ Solução 3: Reiniciar o computador
+
+Às vezes é mais simples:
+
+```cmd
+shutdown /r /t 0
+```
+
+Depois de reiniciar, tente:
+
+```cmd
+npm run dev
+```
+
+---
+
+## Aviso: Unknown project config "node-linker"
+
+Este é apenas um aviso e pode ser ignorado. Não afeta o funcionamento do app.
+
+Se quiser remover o aviso, atualize o npm:
+
+```cmd
+npm install -g npm@latest
+```
