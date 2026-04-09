@@ -1,13 +1,9 @@
 {
-  "buildCommand": "npm run build:web",
+  "buildCommand": "pnpm run build:web",
   "outputDirectory": "web-build",
+  "installCommand": "pnpm install",
   "env": {
     "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
-  },
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
   },
   "rewrites": [
     {
