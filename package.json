@@ -13,7 +13,7 @@
     "build:web": "expo export --platform web --output-dir web-build",
     "start": "pnpm run start:web",
     "start:server": "NODE_ENV=production node dist/index.js",
-    "start:web": "npx serve web-build --port 8080",
+    "start:web": "echo 'Build complete. Deploy to Vercel or use serve web-build'",
     "check": "tsc --noEmit",
     "lint": "expo lint",
     "format": "prettier --write .",
@@ -92,7 +92,7 @@
     "eslint-config-expo": "~10.0.0",
     "prettier": "^3.7.4",
     "qrcode": "^1.5.4",
-    "serve": "^14.2.6",
+
     "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
