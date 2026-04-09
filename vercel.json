@@ -1,7 +1,7 @@
 {
   "buildCommand": "pnpm run build:web",
   "outputDirectory": "web-build",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "env": {
     "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
   },
