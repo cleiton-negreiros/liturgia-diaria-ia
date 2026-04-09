@@ -7,22 +7,20 @@ echo  Liturgia Diária com IA - Dev Server
 echo ========================================
 echo.
 
-REM Definir porta padrão se não estiver definida
-if "%EXPO_PORT%"=="" (
-    set EXPO_PORT=3000
-    echo Usando porta padrão: 3000
-) else (
-    echo Usando porta: %EXPO_PORT%
-)
+REM Definir portas
+set EXPO_PORT=8081
+set NODE_PORT=3000
 
 echo.
 echo Iniciando servidor de desenvolvimento...
-echo Acesse: http://localhost:%EXPO_PORT%/
+echo Servidor Node.js: http://localhost:%NODE_PORT%/
+echo Expo Metro (App): http://localhost:%EXPO_PORT%/
+echo.
 echo.
 echo Pressione Ctrl+C para parar o servidor
 echo.
 
-REM Executar npm run dev com a porta definida
+REM Executar npm run dev
 npm run dev
 
 pause
