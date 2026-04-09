@@ -1,11 +1,23 @@
-import { ScrollView, View, Text, Pressable, ActivityIndicator, Share } from 'react-native';
+// app/(tabs)/index.tsx
 import { useState, useEffect } from 'react';
-import { ScreenContainer } from '@/components/screen-container';
+import { 
+  View, 
+  Text, 
+  Pressable, 
+  ScrollView, 
+  Share, 
+  RefreshControl,
+  Platform 
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+
+// Seus componentes existentes (mantenha os imports originais)
 import { LiturgicalDayHeader } from '@/components/liturgical-day-header';
 import { ReadingCard } from '@/components/reading-card';
 import { useLiturgy, useNavigateLiturgy } from '@/hooks/use-liturgy';
 import { useFavorites } from '@/hooks/use-favorites';
-import { useRouter } from 'expo-router';
+import { cn } from '@/lib/utils';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -13,15 +25,21 @@ export default function HomeScreen() {
   const { liturgy, loading, error, refetch } = useLiturgy(currentDate);
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [isCurrentDay, setIsCurrentDay] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     setIsCurrentDay(currentDate === today);
   }, [currentDate]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch(currentDate);
+    setRefreshing(false);
+  };
+
   const handleFavoritePress = async () => {
     if (!liturgy) return;
-
     if (isFavorite(liturgy.date)) {
       await removeFavorite(liturgy.date);
     } else {
@@ -39,117 +57,121 @@ export default function HomeScreen() {
 
   const handleSharePress = async () => {
     if (!liturgy) return;
-
     try {
-      const message = `Liturgia de ${liturgy.date}\n${liturgy.celebration}\n\nCompartilhado via Liturgia Diária com IA`;
-      await Share.share({
-        message,
-        title: 'Liturgia Diária',
+      await Share.share({ 
+        message: `📖 ${liturgy.celebration} - ${liturgy.date}`,
+        title: 'Liturgia Diária'
       });
     } catch (err) {
-      console.error('Error sharing:', err);
+      console.error('Erro ao compartilhar:', err);
     }
   };
 
-  const handleAnalysisPress = () => {
-    if (!liturgy) return;
-    router.push({
-      pathname: '/analysis',
-      params: { date: liturgy.date },
-    });
+  // 🎨 Cores litúrgicas dinâmicas (mantenha sua lógica original)
+  const seasonColors: Record<string, string> = {
+    'ordinary': 'bg-green-600',
+    'lent': 'bg-purple-700',
+    'easter': 'bg-yellow-500',
+    'advent': 'bg-blue-700',
+    'default': 'bg-primary',
   };
+  const headerColor = seasonColors[liturgy?.season || 'default'];
 
   return (
-    <ScreenContainer className="p-0">
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}>
-        {/* Date Navigation */}
-        <View className="flex-row items-center justify-between mb-4">
-          <Pressable
+    <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 bg-background">
+      <ScrollView 
+        className="flex-1"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-24"
+      >
+        {/* 🔘 Navegação de datas - simplificada */}
+        <View className="flex-row items-center justify-center gap-3 p-3 bg-surface border-b border-border">
+          <Pressable 
             onPress={goToPreviousDay}
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="px-3 py-2 bg-surface rounded-lg border border-border"
+            className="px-4 py-2 rounded-lg bg-muted active:opacity-70"
           >
-            <Text className="text-lg font-semibold text-primary">← Anterior</Text>
+            <Text className="font-medium text-foreground">←</Text>
           </Pressable>
-
-          {!isCurrentDay && (
-            <Pressable
-              onPress={goToToday}
-              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="px-3 py-2 bg-primary rounded-lg"
-            >
-              <Text className="text-sm font-semibold text-foreground">Hoje</Text>
-            </Pressable>
-          )}
-
-          <Pressable
+          
+          <Pressable onPress={goToToday} className="px-3 py-2">
+            <Text className="font-semibold text-foreground">
+              {new Date(currentDate).toLocaleDateString('pt-BR', { 
+                weekday: 'short', 
+                day: '2-digit', 
+                month: 'short' 
+              })}
+            </Text>
+          </Pressable>
+          
+          <Pressable 
             onPress={goToNextDay}
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="px-3 py-2 bg-surface rounded-lg border border-border"
+            className="px-4 py-2 rounded-lg bg-muted active:opacity-70"
           >
-            <Text className="text-lg font-semibold text-primary">Próximo →</Text>
+            <Text className="font-medium text-foreground">→</Text>
           </Pressable>
         </View>
 
-        {/* Loading State */}
+        {/* 📋 Loading State */}
         {loading && (
-          <View className="flex-1 items-center justify-center py-12">
-            <ActivityIndicator size="large" color="#D4AF37" />
-            <Text className="text-muted mt-4">Carregando liturgia...</Text>
+          <View className="p-4 space-y-4">
+            <View className={cn("h-24 rounded-xl animate-pulse", headerColor)} />
+            {[1, 2, 3].map(i => (
+              <View key={i} className="h-32 bg-surface rounded-xl animate-pulse" />
+            ))}
           </View>
         )}
 
-        {/* Error State */}
+        {/* ❌ Error State */}
         {error && !loading && (
-          <View className="bg-error/10 border border-error rounded-lg p-4 mb-4">
-            <Text className="text-error font-semibold mb-2">Erro ao carregar</Text>
-            <Text className="text-error text-sm mb-3">{error}</Text>
-            <Pressable
+          <View className="p-4 m-4 bg-error/10 border border-error rounded-xl">
+            <Text className="text-error font-medium">⚠️ {error}</Text>
+            <Pressable 
               onPress={() => refetch(currentDate)}
-              className="bg-error px-4 py-2 rounded-lg"
+              className="mt-3 px-4 py-2 bg-error rounded-lg"
             >
-              <Text className="text-white text-center font-semibold">Tentar Novamente</Text>
+              <Text className="text-white">Tentar Novamente</Text>
             </Pressable>
           </View>
         )}
 
-        {/* Liturgy Content */}
+        {/* ✅ Conteúdo da Liturgia */}
         {liturgy && !loading && (
           <>
-            {/* Day Header */}
-            <LiturgicalDayHeader
-              day={liturgy}
-              isFavorite={isFavorite(liturgy.date)}
-              onFavoritePress={handleFavoritePress}
-              onSharePress={handleSharePress}
-            />
+            {/* Header com cor litúrgica */}
+            <View className={cn("p-4", headerColor)}>
+              <LiturgicalDayHeader 
+                day={liturgy}
+                isFavorite={isFavorite(liturgy.date)}
+                onFavoritePress={handleFavoritePress}
+                onSharePress={handleSharePress}
+              />
+            </View>
 
-            {/* Readings */}
-            {liturgy.readings && liturgy.readings.length > 0 ? (
-              <>
-                {liturgy.readings.map((reading, index) => (
-                  <ReadingCard key={index} reading={reading} />
-                ))}
-              </>
-            ) : (
-              <View className="bg-surface rounded-lg p-4 border border-border">
-                <Text className="text-muted text-center">Nenhuma leitura disponível</Text>
-              </View>
-            )}
+            {/* Leituras */}
+            <View className="p-4 space-y-3">
+              {liturgy.readings?.map((reading, index) => (
+                <ReadingCard 
+                  key={`${reading.type}-${index}`} 
+                  reading={reading} 
+                />
+              ))}
+            </View>
 
-            {/* Analysis Button */}
-            <Pressable
-              onPress={handleAnalysisPress}
-              style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-              className="bg-primary rounded-lg py-3 px-4 mt-6 mb-8"
+            {/* Botão de Análise */}
+            <Pressable 
+              onPress={() => router.push({ pathname: '/analysis', params: { date: liturgy.date } })}
+              className="mx-4 mt-2 mb-6 p-4 bg-gradient-to-r from-primary to-secondary rounded-2xl active:opacity-90"
             >
-              <Text className="text-center text-base font-semibold text-foreground">
-                📖 Gerar Análise Teológica
+              <Text className="text-white font-bold text-center">
+                ✨ Gerar Análise com IA
               </Text>
             </Pressable>
           </>
         )}
       </ScrollView>
-    </ScreenContainer>
+    </SafeAreaView>
   );
 }

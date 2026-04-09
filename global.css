@@ -1,3 +1,32 @@
+/* global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --color-background: #fafafa;
+    --color-foreground: #171717;
+    --color-surface: #ffffff;
+    --color-border: #e5e5e5;
+    --color-muted: #737373;
+    --color-primary: #7c3aed;
+    --color-secondary: #0ea5e9;
+    --color-error: #dc2626;
+  }
+
+  [data-theme="dark"] {
+    --color-background: #0a0a0a;
+    --color-foreground: #fafafa;
+    --color-surface: #171717;
+    --color-border: #262626;
+    --color-muted: #a3a3a3;
+  }
+}
+
+@layer components {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

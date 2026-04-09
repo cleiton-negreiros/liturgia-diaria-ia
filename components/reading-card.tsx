@@ -1,91 +1,70 @@
+// components/reading-card.tsx
 import React from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, Pressable, Share } from 'react-native';
 import { LiturgicalReading } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useSettings } from '@/hooks/use-settings';
 
 interface ReadingCardProps {
   reading: LiturgicalReading;
-  onShare?: () => void;
-  onCopy?: () => void;
 }
 
-const readingTypeLabels: Record<LiturgicalReading['type'], string> = {
-  'entrance': 'Antífona de Entrada',
-  'first-reading': '1ª Leitura',
-  'psalm': 'Salmo Responsorial',
-  'second-reading': '2ª Leitura',
+const typeLabels: Record<string, string> = {
   'gospel': 'Evangelho',
-  'communion': 'Antífona de Comunhão',
+  'first-reading': '1ª Leitura',
+  'psalm': 'Salmo',
+  'second-reading': '2ª Leitura',
 };
 
-export function ReadingCard({ reading, onShare, onCopy }: ReadingCardProps) {
+export function ReadingCard({ reading }: ReadingCardProps) {
+  const { settings } = useSettings();
+  
+  const fontSize = {
+    small: 'text-sm',
+    normal: 'text-base',
+    large: 'text-lg',
+  }[settings.fontSize];
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `${typeLabels[reading.type]} - ${reading.reference}\n\n${reading.text}`,
+        title: 'Liturgia Diária',
+      });
+    } catch (err) {
+      console.error('Erro ao compartilhar:', err);
+    }
+  };
+
   return (
-    <View className="bg-surface rounded-lg p-4 mb-4 border border-border">
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-lg font-semibold text-primary">
-          {readingTypeLabels[reading.type]}
-        </Text>
-      </View>
-
-      {/* Reference */}
-      {reading.reference && (
-        <Text className="text-sm text-muted mb-2 font-medium">
-          {reading.reference}
-        </Text>
+    <Pressable 
+      className={cn(
+        "p-4 rounded-xl border bg-surface",
+        reading.type === 'gospel' ? "border-primary border-2" : "border-border",
+        "active:opacity-90"
       )}
-
-      {/* Reading Text */}
-      <ScrollView
-        scrollEnabled={false}
-        className="max-h-64 mb-3"
-      >
-        <Text className="text-base text-foreground leading-relaxed">
-          {reading.text}
-        </Text>
-      </ScrollView>
-
-      {/* Action Buttons */}
-      {(onShare || onCopy) && (
-        <View className="flex-row gap-2 pt-3 border-t border-border">
-          {onCopy && (
-            <Pressable
-              onPress={onCopy}
-              className="flex-1"
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? '#E5E7EB' : '#F3F4F6',
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  borderRadius: 6,
-                },
-              ]}
-            >
-              <Text className="text-center text-sm font-medium text-foreground">
-                Copiar
-              </Text>
-            </Pressable>
-          )}
-          {onShare && (
-            <Pressable
-              onPress={onShare}
-              className="flex-1"
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? '#E5E7EB' : '#F3F4F6',
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  borderRadius: 6,
-                },
-              ]}
-            >
-              <Text className="text-center text-sm font-medium text-foreground">
-                Compartilhar
-              </Text>
-            </Pressable>
+    >
+      <View className="flex-row justify-between items-start mb-2">
+        <View>
+          <Text className={cn("font-semibold text-foreground", fontSize)}>
+            {typeLabels[reading.type]}
+          </Text>
+          {reading.reference && (
+            <Text className="text-muted text-sm mt-0.5">{reading.reference}</Text>
           )}
         </View>
-      )}
-    </View>
+        <Pressable 
+          onPress={handleShare}
+          className="p-2"
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text className="text-xl">📤</Text>
+        </Pressable>
+      </View>
+      
+      <Text className={cn("text-foreground leading-relaxed", fontSize)}>
+        {reading.text}
+      </Text>
+    </Pressable>
   );
 }
