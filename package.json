@@ -5,14 +5,15 @@
   "main": "expo-router/entry",
   "scripts": {
     "dev": "concurrently -k \"pnpm dev:server\" \"pnpm dev:metro\"",
+    "dev:port": "set EXPO_PORT=3000 && npm run dev",
     "dev:server": "cross-env NODE_ENV=development tsx watch server/_core/index.ts",
-    "dev:metro": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start --web --port ${EXPO_PORT:-8081}",
+    "dev:metro": "cross-env EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start --web --port 3000",
     "build": "pnpm run build:web",
     "build:server": "esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "build:web": "expo export --platform web --output-dir web-build",
     "start": "pnpm run start:web",
     "start:server": "NODE_ENV=production node dist/index.js",
-    "start:web": "npx serve web-build",
+    "start:web": "npx serve web-build --port 3000",
     "check": "tsc --noEmit",
     "lint": "expo lint",
     "format": "prettier --write .",
@@ -22,7 +23,8 @@
     "ios": "expo start --ios",
     "qr": "node scripts/generate_qr.mjs",
     "export:web": "expo export --platform web --output-dir web-build",
-    "vercel-build": "pnpm run build:web"
+    "vercel-build": "pnpm run build:web",
+    "start:prod": "pnpm run start:web"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
