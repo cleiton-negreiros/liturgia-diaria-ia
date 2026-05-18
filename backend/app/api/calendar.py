@@ -36,13 +36,55 @@ async def get_liturgical_calendar(
             
             content_type = response.headers.get("content-type", "")
             if "application/json" not in content_type:
-                raise HTTPException(status_code=502, detail="External API returned non-JSON response")
+                # Fallback to basic calendar data if external API fails
+                return {
+                    "success": True,
+                    "data": {
+                        "year": target_year,
+                        "source": "fallback",
+                        "seasons": [
+                            {"name": "Advent", "color": "purple", "start": "Late November", "end": "December 24"},
+                            {"name": "Christmas", "color": "white", "start": "December 25", "end": "January"},
+                            {"name": "Lent", "color": "purple", "start": "Ash Wednesday", "end": "Holy Thursday"},
+                            {"name": "Easter", "color": "white", "start": "Easter Sunday", "end": "Pentecost"},
+                            {"name": "Ordinary Time", "color": "green", "start": "After Baptism of Lord", "end": "Advent"},
+                        ]
+                    },
+                }
             
             data = response.json()
     except httpx.RequestError as e:
-        raise HTTPException(status_code=502, detail=f"Error connecting to calendar API: {str(e)}")
+        # Fallback to basic calendar data
+        return {
+            "success": True,
+            "data": {
+                "year": target_year,
+                "source": "fallback",
+                "seasons": [
+                    {"name": "Advent", "color": "purple", "start": "Late November", "end": "December 24"},
+                    {"name": "Christmas", "color": "white", "start": "December 25", "end": "January"},
+                    {"name": "Lent", "color": "purple", "start": "Ash Wednesday", "end": "Holy Thursday"},
+                    {"name": "Easter", "color": "white", "start": "Easter Sunday", "end": "Pentecost"},
+                    {"name": "Ordinary Time", "color": "green", "start": "After Baptism of Lord", "end": "Advent"},
+                ]
+            },
+        }
     except ValueError as e:
-        raise HTTPException(status_code=502, detail=f"Error parsing calendar data: {str(e)}")
+        # Fallback to basic calendar data
+        return {
+            "success": True,
+            "data": {
+                "year": target_year,
+                "source": "fallback",
+                "seasons": [
+                    {"name": "Advent", "color": "purple", "start": "Late November", "end": "December 24"},
+                    {"name": "Christmas", "color": "white", "start": "December 25", "end": "January"},
+                    {"name": "Lent", "color": "purple", "start": "Ash Wednesday", "end": "Holy Thursday"},
+                    {"name": "Easter", "color": "white", "start": "Easter Sunday", "end": "Pentecost"},
+                    {"name": "Ordinary Time", "color": "green", "start": "After Baptism of Lord", "end": "Advent"},
+                ]
+            },
+        }
 
     return {
         "success": True,
