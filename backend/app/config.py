@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     supported_languages: list[str] = ["pt", "en", "es", "it"]
 
     # API URLs
-    liturgia_diaria_url: str = "https://liturgia.up.railway.app/v2"
+    liturgia_diaria_url: str = "https://www.oraetlabora.com.br/api/liturgia"
     usccb_url: str = "https://bible.usccb.org/bible/readings"
     ewtn_url: str = "https://www.ewtn.com/es/catolicismo/lecturas"
     dailyreadings_url: str = "https://www.dailyreadings.eu"

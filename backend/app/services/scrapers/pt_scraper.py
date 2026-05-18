@@ -1,13 +1,12 @@
 """
 Portuguese readings scraper.
-Source: https://liturgia.up.railway.app/v2/ (Dancrf/liturgia-diaria)
-This API provides daily mass readings in Portuguese from CNBB.
+Source: https://www.oraetlabora.com.br/api/liturgia (Ora et Labora)
+This API provides daily mass readings in Portuguese from Canção Nova/CNBB.
 """
 
 import httpx
 from datetime import date
 from typing import Optional
-from bs4 import BeautifulSoup
 
 from app.config import get_settings
 from app.models.readings import (
@@ -34,11 +33,7 @@ async def fetch_portuguese_readings(
         DailyReadings object with all readings for the day.
     """
     settings = get_settings()
-    date_str = target_date.strftime("%Y-%m-%d") if target_date else ""
-
-    url = f"{settings.liturgia_diaria_url}/hoje"
-    if date_str:
-        url = f"{settings.liturgia_diaria_url}/dia/{date_str}"
+    url = "https://www.oraetlabora.com.br/api/liturgia"
 
     async with httpx.AsyncClient(
         timeout=30.0,
@@ -49,103 +44,62 @@ async def fetch_portuguese_readings(
         response.raise_for_status()
         data = response.json()
 
-    return _parse_liturgia_diaria_response(data, date_str or date.today().isoformat())
+    return _parse_oraetlabora_response(data, target_date or date.today())
 
 
-def _parse_liturgia_diaria_response(data: dict, date_str: str) -> DailyReadings:
-    """Parse the liturgia-diaria API response into our model."""
+def _parse_oraetlabora_response(data: dict, target_date: date) -> DailyReadings:
+    """Parse the oraetlabora API response into our model."""
     readings = []
 
-    # Parse first reading
-    if data.get("primeira_leitura"):
-        readings.append(
-            Reading(
-                type=ReadingType.FIRST_READING,
-                reference=data["primeira_leitura"].get("referencia", ""),
-                text=data["primeira_leitura"].get("texto", ""),
-            )
-        )
+    color_map = {
+        "branco": LiturgicalColor.WHITE,
+        "vermelho": LiturgicalColor.RED,
+        "verde": LiturgicalColor.GREEN,
+        "roxo": LiturgicalColor.PURPLE,
+        "rosa": LiturgicalColor.ROSE,
+        "preto": LiturgicalColor.BLACK,
+    }
 
-    # Parse psalm
-    if data.get("salmo"):
-        readings.append(
-            Reading(
-                type=ReadingType.PSALM,
-                reference=data["salmo"].get("referencia", ""),
-                text=data["salmo"].get("texto", ""),
-                responsorial=data["salmo"].get("refrao"),
-            )
-        )
+    if data.get("leituras"):
+        for leitura in data["leituras"]:
+            tipo = leitura.get("tipo", "").lower()
+            reading_type = None
 
-    # Parse second reading (Sundays and solemnities)
-    if data.get("segunda_leitura"):
-        readings.append(
-            Reading(
-                type=ReadingType.SECOND_READING,
-                reference=data["segunda_leitura"].get("referencia", ""),
-                text=data["segunda_leitura"].get("texto", ""),
-            )
-        )
+            if "1" in tipo or "primeira" in tipo:
+                reading_type = ReadingType.FIRST_READING
+            elif "salmo" in tipo:
+                reading_type = ReadingType.PSALM
+            elif "2" in tipo or "segunda" in tipo:
+                reading_type = ReadingType.SECOND_READING
+            elif "evangelho" in tipo:
+                reading_type = ReadingType.GOSPEL
+            elif "aleluia" in tipo:
+                reading_type = ReadingType.GOSPEL_ACCLAMATION
 
-    # Parse gospel acclamation
-    if data.get("aleluia"):
-        readings.append(
-            Reading(
-                type=ReadingType.GOSPEL_ACCLAMATION,
-                reference="Aleluia",
-                text=data["aleluia"].get("texto", ""),
-            )
-        )
+            if reading_type:
+                readings.append(
+                    Reading(
+                        type=reading_type,
+                        reference=leitura.get("referencia", ""),
+                        text=leitura.get("texto", ""),
+                    )
+                )
 
-    # Parse gospel
-    if data.get("evangelho"):
-        readings.append(
-            Reading(
-                type=ReadingType.GOSPEL,
-                reference=data["evangelho"].get("referencia", ""),
-                text=data["evangelho"].get("texto", ""),
-            )
-        )
-
-    # Build liturgical day info
-    liturgical_day = None
-    if data.get("celebracao"):
-        color_map = {
-            "branco": LiturgicalColor.WHITE,
-            "vermelho": LiturgicalColor.RED,
-            "verde": LiturgicalColor.GREEN,
-            "roxo": LiturgicalColor.PURPLE,
-            "rosa": LiturgicalColor.ROSE,
-            "preto": LiturgicalColor.BLACK,
-        }
-
-        rank_map = {
-            "solene": LiturgicalRank.SOLEMNITY,
-            "festa": LiturgicalRank.FEAST,
-            "memoria": LiturgicalRank.MEMORIAL,
-            "memoria facultativa": LiturgicalRank.OPTIONAL_MEMORIAL,
-            "domingo": LiturgicalRank.SUNDAY,
-        }
-
-        liturgical_day = LiturgicalDay(
-            date=date.fromisoformat(date_str),
-            name=data["celebracao"].get("nome", ""),
-            color=color_map.get(
-                data["celebracao"].get("cor", "").lower(), LiturgicalColor.GREEN
-            ),
-            rank=rank_map.get(
-                data["celebracao"].get("tipo", "").lower(), LiturgicalRank.FERIA
-            ),
-            season=data.get("tempo", ""),
-            week=data.get("semana"),
-            cycle=data.get("ciclo"),
-        )
+    liturgical_day = LiturgicalDay(
+        date=target_date,
+        name=data.get("diaSemana", ""),
+        color=color_map.get(
+            data.get("corLiturgica", "").lower(), LiturgicalColor.GREEN
+        ),
+        rank=LiturgicalRank.FERIA,
+        season=data.get("tempoLiturgico", ""),
+    )
 
     return DailyReadings(
-        date=date.fromisoformat(date_str),
+        date=target_date,
         language=Language.PORTUGUESE,
         liturgical_day=liturgical_day,
-        title=data.get("celebracao", {}).get("nome", f"Liturgia de {date_str}"),
+        title=f"{data.get('diaSemana', '')} - {data.get('tempoLiturgico', '')}",
         readings=readings,
-        source="liturgia.up.railway.app",
+        source="oraetlabora.com.br",
     )
