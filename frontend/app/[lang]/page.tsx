@@ -45,36 +45,37 @@ interface Props {
   params: Promise<{ lang: string }>;
 }
 
-export default function Home({ params }: Props) {
-  const lang = (params as { lang: string }).lang || "pt";
-  const t = translations[lang] || translations.pt;
+export default async function Home({ params }: Props) {
+  const { lang } = await params;
+  const resolvedLang = lang || "pt";
+  const t = translations[resolvedLang] || translations.pt;
 
   const features = [
     {
       icon: BookOpen,
       title: t.todayReadings,
-      href: `/${lang}/readings`,
+      href: `/${resolvedLang}/readings`,
       color: "text-primary",
       bgColor: "bg-primary/10",
     },
     {
       icon: Cross,
       title: t.prayers,
-      href: `/${lang}/prayers`,
+      href: `/${resolvedLang}/prayers`,
       color: "text-gold-500",
       bgColor: "bg-gold-500/10",
     },
     {
       icon: BookText,
       title: t.bible,
-      href: `/${lang}/bible`,
+      href: `/${resolvedLang}/bible`,
       color: "text-liturgical-green",
       bgColor: "bg-liturgical-green/10",
     },
     {
       icon: Calendar,
       title: t.calendar,
-      href: `/${lang}/calendar`,
+      href: `/${resolvedLang}/calendar`,
       color: "text-liturgical-purple",
       bgColor: "bg-liturgical-purple/10",
     },
@@ -104,10 +105,10 @@ export default function Home({ params }: Props) {
                 {feature.title}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {lang === "pt" && "Clique para acessar"}
-                {lang === "en" && "Click to access"}
-                {lang === "es" && "Haz clic para acceder"}
-                {lang === "it" && "Clicca per accedere"}
+                {resolvedLang === "pt" && "Clique para acessar"}
+                {resolvedLang === "en" && "Click to access"}
+                {resolvedLang === "es" && "Haz clic para acceder"}
+                {resolvedLang === "it" && "Clicca per accedere"}
               </p>
             </Link>
           ))}
