@@ -1,0 +1,9 @@
+# Liturgia Diária IA - robots.txt
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://liturgia-diaria-ia.vercel.app/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
