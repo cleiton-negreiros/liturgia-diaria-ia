@@ -34,6 +34,19 @@
 - [x] Write 8 Catholic prayers in 4 languages
 - [x] Create Bible books reference data (Portuguese)
 
+### Session 2 - 2026-05-18 ✅
+- [x] Fix Tailwind CSS v4 configuration (postcss.config.js + CSS variables)
+- [x] Fix Next.js 15 params Promise handling
+- [x] Fix Bible icon (Bible -> BookText in lucide-react)
+- [x] Remove unsupported i18n config from next.config.ts
+- [x] Fix vercel.json version number
+- [x] Configure Supabase environment variables in Vercel
+- [x] Deploy frontend and backend to Vercel
+- [x] Fix PT scraper API (oraetlabora.com.br)
+- [x] Fix manifest.json icons (remove missing files)
+- [x] Improve CORS configuration
+- [x] Add detailed error logging to API fetch
+
 ---
 
 ## Completed Tasks
@@ -48,32 +61,28 @@
 #### Portuguese (PT)
 | API | URL | Status | Notes |
 |-----|-----|--------|-------|
-| Liturgia Diária v2 | https://liturgia.up.railway.app/v2/ | ✅ Active | 181 stars, best option |
-| API Liturgia Diária | https://api-liturgia-diaria.vercel.app/ | ✅ Active | Scrapes Canção Nova |
+| Ora et Labora | https://www.oraetlabora.com.br/api/liturgia | ✅ Active | Canção Nova/CNBB source |
+| Liturgia Diária v2 | https://liturgia.up.railway.app/v2/ | ⚠️ Limited | Only current/past dates |
 
 #### English (EN)
 | API | URL | Status | Notes |
 |-----|-----|--------|-------|
 | USCCB | https://bible.usccb.org/bible/readings/ | ✅ Active | Official US bishops |
-| catholic-mass-readings | PyPI package | ✅ Active | Python scraper for USCCB |
 
 #### Spanish (ES)
 | API | URL | Status | Notes |
 |-----|-----|--------|-------|
 | EWTN Español | https://www.ewtn.com/es/catolicismo/lecturas | ✅ Active | Daily readings |
-| evangeli.net | https://evangeli.net/evangelio/ | ✅ Active | Gospel commentary |
 
 #### Italian (IT)
 | API | URL | Status | Notes |
 |-----|-----|--------|-------|
 | Daily Readings EU | https://www.dailyreadings.eu/it | ✅ Active | 17 languages |
-| evangeli.net | https://evangeli.net/vangelo/ | ✅ Active | Gospel commentary |
 
 #### Multilingual
 | API | URL | Status | Notes |
 |-----|-----|--------|-------|
 | Liturgical Calendar | https://litcal.johnromanodorazio.com/ | ✅ Active | Calendar + seasons |
-| evangeli.net | 9 languages | ✅ Active | Gospel commentary |
 
 ### Phase 3: Backend Setup ✅
 - [x] Initialize Python project with requirements.txt
@@ -84,7 +93,7 @@
 - [x] Create Pydantic models for all data types
 
 ### Phase 4: Reading Scrapers ✅
-- [x] Portuguese scraper (liturgia.up.railway.app)
+- [x] Portuguese scraper (oraetlabora.com.br)
 - [x] English scraper (USCCB via BeautifulSoup)
 - [x] Spanish scraper (EWTN)
 - [x] Italian scraper (dailyreadings.eu)
@@ -99,7 +108,7 @@
 ### Phase 6: Frontend ✅
 - [x] Initialize Next.js project with App Router
 - [x] Create responsive layout components
-- [x] Implement dark mode with Tailwind CSS
+- [x] Implement dark mode with Tailwind CSS v4
 - [x] Build daily readings page
 - [x] Build calendar view
 - [x] Add language switcher
@@ -139,6 +148,19 @@
 - [x] Configure Vercel deployment
 - [x] Create environment variable templates
 - [x] Create vercel.json for backend
+- [x] Configure Supabase env vars in Vercel
+- [x] Deploy frontend to Vercel
+- [x] Deploy backend to Vercel
+
+### Phase 12: Bug Fixes ✅
+- [x] Fix Tailwind CSS v4 configuration
+- [x] Fix Next.js 15 params handling
+- [x] Fix lucide-react Bible icon
+- [x] Fix vercel.json version
+- [x] Fix PT scraper API source
+- [x] Fix manifest.json missing icons
+- [x] Improve CORS configuration
+- [x] Add detailed error logging
 
 ---
 
@@ -150,13 +172,11 @@
 - [ ] Integrate full Bible text API (API.Bible or similar)
 - [ ] Add more Catholic prayers (Rosary, Divine Mercy, etc.)
 - [ ] Add search functionality for prayers and Bible
-- [ ] Create favicon and app icons
+- [ ] Create app icons (favicon, apple-touch-icon)
 - [ ] Add structured data (JSON-LD) for SEO
 - [ ] Generate sitemap.xml dynamically
 - [ ] Add unit tests for scrapers
 - [ ] Add integration tests for API
-- [ ] Set up actual Supabase project
-- [ ] Configure Vercel project in dashboard
 - [ ] Add error boundary components
 - [ ] Add loading states and skeletons
 - [ ] Add i18n translations for all UI text
@@ -234,14 +254,25 @@ liturgia-diaria-ia/
 
 ```env
 # Supabase
-SUPABASE_URL=
-SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_URL=https://hhnuivxtkqplyoghgezw.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_...
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
 
 # App
-NEXT_PUBLIC_API_URL=
-NODE_ENV=development
+NEXT_PUBLIC_API_URL=https://backend-eta-olive-23.vercel.app
+NODE_ENV=production
 ```
+
+---
+
+## Production URLs
+
+| Service | URL |
+|---------|-----|
+| Frontend | https://liturgia-diaria-ia-frontend.vercel.app |
+| Backend API | https://backend-eta-olive-23.vercel.app |
+| API Docs | https://backend-eta-olive-23.vercel.app/docs |
+| GitHub | https://github.com/cleiton-negreiros/liturgia-diaria-ia |
 
 ---
 
@@ -251,6 +282,5 @@ Continue with:
 1. Add Bible data for EN, ES, IT
 2. Create app icons and favicon
 3. Add more prayers
-4. Set up Supabase project
-5. Deploy to Vercel
-6. Add tests
+4. Add unit tests
+5. Add structured data (JSON-LD)

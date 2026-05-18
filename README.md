@@ -22,12 +22,6 @@ A modern, lightweight, responsive Progressive Web App (PWA) for Catholic daily l
 - **Liturgical Calendar** - Seasons, colors, cycles, and solemnities
 - **Auto-Deploy** - GitHub Actions + Vercel CI/CD pipeline
 
-## 📱 Screenshots
-
-| Light Mode | Dark Mode |
-|------------|-----------|
-| ![Light](docs/screenshots/light.png) | ![Dark](docs/screenshots/dark.png) |
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -40,7 +34,7 @@ A modern, lightweight, responsive Progressive Web App (PWA) for Catholic daily l
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/liturgia-diaria-ia.git
+git clone https://github.com/cleiton-negreiros/liturgia-diaria-ia.git
 cd liturgia-diaria-ia
 ```
 
@@ -119,8 +113,8 @@ Frontend will be available at `http://localhost:3000`
 ## 🌐 Data Sources
 
 ### Portuguese (PT)
-- **Liturgia Diária API** - https://liturgia.up.railway.app/v2/
-- Source: CNBB (Conferência Nacional dos Bispos do Brasil)
+- **Ora et Labora** - https://www.oraetlabora.com.br/api/liturgia
+- Source: Canção Nova / CNBB
 
 ### English (EN)
 - **USCCB** - https://bible.usccb.org/bible/readings/
@@ -222,6 +216,20 @@ Complete listing of 73 books:
 - **Old Testament**: 46 books (including Deuterocanonical)
 - **New Testament**: 27 books
 
+## 🐛 Known Issues & Fixes
+
+### Fixed Issues
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Readings 404 error | `liturgia.up.railway.app` doesn't support future dates | Switched to `oraetlabora.com.br` API |
+| Tailwind CSS not loading | Tailwind v4 requires PostCSS config | Added `postcss.config.js` and CSS variables |
+| Bible icon missing | `Bible` not exported from lucide-react | Changed to `BookText` icon |
+| Next.js build error | `params` is Promise in Next.js 15 | Added `await params` in server components |
+| i18n config error | `localeDetection` not supported in App Router | Removed i18n config from next.config.ts |
+| Vercel deploy error | `version` must be number in vercel.json | Changed from `"0.1.0"` to `2` |
+| PWA icon 404 | Manifest referenced missing icon files | Simplified to use favicon only |
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our contributing guidelines and submit pull requests.
@@ -238,7 +246,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- CNBB for Portuguese readings
+- Ora et Labora for Portuguese readings
 - USCCB for English readings
 - EWTN for Spanish readings
 - Daily Readings EU for Italian readings
@@ -247,8 +255,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/liturgia-diaria-ia/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/liturgia-diaria-ia/discussions)
+- **Issues**: [GitHub Issues](https://github.com/cleiton-negreiros/liturgia-diaria-ia/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/cleiton-negreiros/liturgia-diaria-ia/discussions)
 
 ---
 
