@@ -28,11 +28,21 @@ async def get_liturgical_calendar(
 
     url = f"{url}/{target_year}"
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.get(url)
-        if response.status_code != 200:
-            raise HTTPException(status_code=502, detail="Error fetching calendar from external API")
-        data = response.json()
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(url)
+            if response.status_code != 200:
+                raise HTTPException(status_code=502, detail="Error fetching calendar from external API")
+            
+            content_type = response.headers.get("content-type", "")
+            if "application/json" not in content_type:
+                raise HTTPException(status_code=502, detail="External API returned non-JSON response")
+            
+            data = response.json()
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Error connecting to calendar API: {str(e)}")
+    except ValueError as e:
+        raise HTTPException(status_code=502, detail=f"Error parsing calendar data: {str(e)}")
 
     return {
         "success": True,
@@ -48,11 +58,21 @@ async def get_todays_liturgy():
 
     url = f"{settings.liturgical_calendar_url}/api/calendar/{today.year}"
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.get(url)
-        if response.status_code != 200:
-            raise HTTPException(status_code=502, detail="Error fetching calendar")
-        data = response.json()
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(url)
+            if response.status_code != 200:
+                raise HTTPException(status_code=502, detail="Error fetching calendar")
+            
+            content_type = response.headers.get("content-type", "")
+            if "application/json" not in content_type:
+                raise HTTPException(status_code=502, detail="External API returned non-JSON response")
+            
+            data = response.json()
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Error connecting to calendar API: {str(e)}")
+    except ValueError as e:
+        raise HTTPException(status_code=502, detail=f"Error parsing calendar data: {str(e)}")
 
     # Find today's entry
     today_str = today.isoformat()

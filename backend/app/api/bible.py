@@ -95,18 +95,16 @@ async def get_bible_books(
     testament: Optional[str] = Query(None, description="Filter by testament: old or new"),
 ):
     """Get list of Bible books in the specified language."""
-    if lang.value not in BIBLE_BOOKS:
-        raise HTTPException(status_code=400, detail=f"Language {lang.value} not yet available")
-
-    books = BIBLE_BOOKS[lang.value]
+    # Fallback to Portuguese if language not available
+    books_data = BIBLE_BOOKS.get(lang.value, BIBLE_BOOKS.get("pt", {}))
     result = []
 
     if testament == "old" or testament is None:
-        for book in books["old_testament"]:
+        for book in books_data.get("old_testament", []):
             result.append({**book, "testament": "old"})
 
     if testament == "new" or testament is None:
-        for book in books["new_testament"]:
+        for book in books_data.get("new_testament", []):
             result.append({**book, "testament": "new"})
 
     return {
