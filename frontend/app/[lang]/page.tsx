@@ -2,7 +2,7 @@ import BaseLayout from "@/components/base-layout";
 import { BookOpen, Cross, BookText, Calendar } from "lucide-react";
 import Link from "next/link";
 
-const translations: Record<string, Record<string, Record<string, string>>> = {
+const translations: Record<string, { title: string; subtitle: string; todayReadings: string; prayers: string; bible: string; calendar: string; description: string }> = {
   pt: {
     title: "Liturgia Diária",
     subtitle: "Leituras da Missa Católica em 4 línguas",
