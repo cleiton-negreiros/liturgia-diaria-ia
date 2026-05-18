@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Sun, Moon, BookOpen, Cross, Calendar, Menu, X, Bible } from "lucide-react";
+import { Sun, Moon, BookOpen, Cross, Calendar, Menu, X, BookText } from "lucide-react";
 import { useState } from "react";
 import { useLanguage, type Language, languageNames } from "./language-provider";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "readings", icon: BookOpen, href: "/readings" },
   { name: "prayers", icon: Cross, href: "/prayers" },
-  { name: "bible", icon: Bible, href: "/bible" },
+  { name: "bible", icon: BookText, href: "/bible" },
   { name: "calendar", icon: Calendar, href: "/calendar" },
 ];
 

@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  
-  // PWA support
+
   async headers() {
     return [
       {
@@ -23,13 +22,6 @@ const nextConfig = {
         ],
       },
     ];
-  },
-
-  // i18n routing
-  i18n: {
-    locales: ['pt', 'en', 'es', 'it'],
-    defaultLocale: 'pt',
-    localeDetection: true,
   },
 };
 

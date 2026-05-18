@@ -1,6 +1,6 @@
 import BaseLayout from "@/components/base-layout";
 import { fetchBibleBooks } from "@/lib/api";
-import { Bible, BookOpen } from "lucide-react";
+import { BookText, BookOpen } from "lucide-react";
 
 const translations: Record<string, Record<string, string>> = {
   pt: {
@@ -100,7 +100,7 @@ export default async function BiblePage({ params }: Props) {
         {newTestament.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Bible className="h-5 w-5 text-liturgical-green" />
+              <BookText className="h-5 w-5 text-liturgical-green" />
               {t.new_testament}
               <span className="text-sm text-muted-foreground font-normal">
                 ({newTestament.length} {t.chapters})

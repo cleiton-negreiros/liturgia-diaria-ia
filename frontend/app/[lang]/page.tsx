@@ -1,5 +1,5 @@
 import BaseLayout from "@/components/base-layout";
-import { BookOpen, Cross, Bible, Calendar } from "lucide-react";
+import { BookOpen, Cross, BookText, Calendar } from "lucide-react";
 import Link from "next/link";
 
 const translations: Record<string, Record<string, Record<string, string>>> = {
@@ -65,7 +65,7 @@ export default function Home({ params }: Props) {
       bgColor: "bg-gold-500/10",
     },
     {
-      icon: Bible,
+      icon: BookText,
       title: t.bible,
       href: `/${lang}/bible`,
       color: "text-liturgical-green",
