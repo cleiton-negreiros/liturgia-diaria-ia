@@ -1,6 +1,6 @@
 import BaseLayout from "@/components/base-layout";
 import { fetchBibleBooks } from "@/lib/api";
-import { BookText, BookOpen } from "lucide-react";
+import { BookText, BookOpen, ExternalLink } from "lucide-react";
 
 const translations: Record<string, Record<string, string>> = {
   pt: {
@@ -9,6 +9,7 @@ const translations: Record<string, Record<string, string>> = {
     old_testament: "Antigo Testamento",
     new_testament: "Novo Testamento",
     chapters: "capítulos",
+    open_bible: "Abrir Bíblia",
   },
   en: {
     title: "Catholic Bible",
@@ -16,6 +17,7 @@ const translations: Record<string, Record<string, string>> = {
     old_testament: "Old Testament",
     new_testament: "New Testament",
     chapters: "chapters",
+    open_bible: "Open Bible",
   },
   es: {
     title: "Biblia Católica",
@@ -23,6 +25,7 @@ const translations: Record<string, Record<string, string>> = {
     old_testament: "Antiguo Testamento",
     new_testament: "Nuevo Testamento",
     chapters: "capítulos",
+    open_bible: "Abrir Biblia",
   },
   it: {
     title: "Bibbia Cattolica",
@@ -30,7 +33,15 @@ const translations: Record<string, Record<string, string>> = {
     old_testament: "Antico Testamento",
     new_testament: "Nuovo Testamento",
     chapters: "capitoli",
+    open_bible: "Apri Bibbia",
   },
+};
+
+const bibleLinks: Record<string, string> = {
+  pt: "https://bibliacatolica.com.br/",
+  en: "https://bible.usccb.org/",
+  es: "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+  it: "https://www.vatican.va/archive/ITA0001/_INDEX.HTM",
 };
 
 interface Props {
@@ -40,6 +51,7 @@ interface Props {
 export default async function BiblePage({ params }: Props) {
   const lang = (await params).lang || "pt";
   const t = translations[lang] || translations.pt;
+  const bibleUrl = bibleLinks[lang] || bibleLinks.pt;
 
   let booksData = null;
   let error = null;
@@ -82,15 +94,23 @@ export default async function BiblePage({ params }: Props) {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {oldTestament.map((book: any) => (
-                <div
+                <a
                   key={book.name}
-                  className="reading-card py-3 px-4 hover:bg-accent transition-colors cursor-pointer"
+                  href={bibleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="reading-card py-3 px-4 hover:bg-accent transition-colors cursor-pointer group block"
                 >
-                  <p className="font-medium text-sm">{book.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {book.chapters} {t.chapters}
-                  </p>
-                </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-sm">{book.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {book.chapters} {t.chapters}
+                      </p>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </a>
               ))}
             </div>
           </div>
@@ -108,15 +128,23 @@ export default async function BiblePage({ params }: Props) {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {newTestament.map((book: any) => (
-                <div
+                <a
                   key={book.name}
-                  className="reading-card py-3 px-4 hover:bg-accent transition-colors cursor-pointer"
+                  href={bibleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="reading-card py-3 px-4 hover:bg-accent transition-colors cursor-pointer group block"
                 >
-                  <p className="font-medium text-sm">{book.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {book.chapters} {t.chapters}
-                  </p>
-                </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-sm">{book.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {book.chapters} {t.chapters}
+                      </p>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </a>
               ))}
             </div>
           </div>
