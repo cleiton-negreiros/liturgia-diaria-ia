@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 
@@ -5,24 +6,24 @@ from app.models.readings import Language
 
 router = APIRouter(prefix="/api/bible", tags=["bible"])
 
-# Bible books reference data
+# Bible books reference data (Portuguese)
 BIBLE_BOOKS = {
     "pt": {
         "old_testament": [
-            {"name": "Gênesis", "abbr": "Gn", "chapters": 50},
-            {"name": "Êxodo", "abbr": "Ex", "chapters": 40},
-            {"name": "Levítico", "abbr": "Lv", "chapters": 27},
-            {"name": "Números", "abbr": "Nm", "chapters": 36},
-            {"name": "Deuteronômio", "abbr": "Dt", "chapters": 34},
-            {"name": "Josué", "abbr": "Js", "chapters": 24},
-            {"name": "Juízes", "abbr": "Jz", "chapters": 21},
+            {"name": "Genesis", "abbr": "Gn", "chapters": 50},
+            {"name": "Exodo", "abbr": "Ex", "chapters": 40},
+            {"name": "Levitico", "abbr": "Lv", "chapters": 27},
+            {"name": "Numeros", "abbr": "Nm", "chapters": 36},
+            {"name": "Deuteronomio", "abbr": "Dt", "chapters": 34},
+            {"name": "Josue", "abbr": "Js", "chapters": 24},
+            {"name": "Juizes", "abbr": "Jz", "chapters": 21},
             {"name": "Rute", "abbr": "Rt", "chapters": 4},
             {"name": "1 Samuel", "abbr": "1Sm", "chapters": 31},
             {"name": "2 Samuel", "abbr": "2Sm", "chapters": 24},
             {"name": "1 Reis", "abbr": "1Rs", "chapters": 22},
             {"name": "2 Reis", "abbr": "2Rs", "chapters": 25},
-            {"name": "1 Crônicas", "abbr": "1Cr", "chapters": 29},
-            {"name": "2 Crônicas", "abbr": "2Cr", "chapters": 36},
+            {"name": "1 Cronicas", "abbr": "1Cr", "chapters": 29},
+            {"name": "2 Cronicas", "abbr": "2Cr", "chapters": 36},
             {"name": "Esdras", "abbr": "Esd", "chapters": 10},
             {"name": "Neemias", "abbr": "Ne", "chapters": 13},
             {"name": "Tobias", "abbr": "Tb", "chapters": 14},
@@ -30,22 +31,22 @@ BIBLE_BOOKS = {
             {"name": "Ester", "abbr": "Est", "chapters": 10},
             {"name": "1 Macabeus", "abbr": "1Mc", "chapters": 16},
             {"name": "2 Macabeus", "abbr": "2Mc", "chapters": 15},
-            {"name": "Jó", "abbr": "Jó", "chapters": 42},
+            {"name": "Jo", "abbr": "Jo", "chapters": 42},
             {"name": "Salmos", "abbr": "Sl", "chapters": 150},
-            {"name": "Provérbios", "abbr": "Prov", "chapters": 31},
+            {"name": "Proverbios", "abbr": "Prov", "chapters": 31},
             {"name": "Eclesiastes", "abbr": "Ecl", "chapters": 12},
-            {"name": "Cântico dos Cânticos", "abbr": "Ct", "chapters": 8},
+            {"name": "Cantico dos Canticos", "abbr": "Ct", "chapters": 8},
             {"name": "Sabedoria", "abbr": "Sab", "chapters": 19},
-            {"name": "Eclesiástico", "abbr": "Eclo", "chapters": 51},
-            {"name": "Isaías", "abbr": "Is", "chapters": 66},
+            {"name": "Eclesiastico", "abbr": "Eclo", "chapters": 51},
+            {"name": "Isaias", "abbr": "Is", "chapters": 66},
             {"name": "Jeremias", "abbr": "Jr", "chapters": 52},
-            {"name": "Lamentações", "abbr": "Lm", "chapters": 5},
+            {"name": "Lamentacoes", "abbr": "Lm", "chapters": 5},
             {"name": "Baruc", "abbr": "Br", "chapters": 6},
             {"name": "Ezequiel", "abbr": "Ez", "chapters": 48},
             {"name": "Daniel", "abbr": "Dn", "chapters": 14},
             {"name": "Oseias", "abbr": "Os", "chapters": 14},
             {"name": "Joel", "abbr": "Jl", "chapters": 4},
-            {"name": "Amós", "abbr": "Am", "chapters": 9},
+            {"name": "Amos", "abbr": "Am", "chapters": 9},
             {"name": "Abdias", "abbr": "Abd", "chapters": 1},
             {"name": "Jonas", "abbr": "Jon", "chapters": 4},
             {"name": "Miqueias", "abbr": "Mq", "chapters": 7},
@@ -60,33 +61,64 @@ BIBLE_BOOKS = {
             {"name": "Mateus", "abbr": "Mt", "chapters": 28},
             {"name": "Marcos", "abbr": "Mc", "chapters": 16},
             {"name": "Lucas", "abbr": "Lc", "chapters": 24},
-            {"name": "João", "abbr": "Jo", "chapters": 21},
-            {"name": "Atos dos Apóstolos", "abbr": "At", "chapters": 28},
+            {"name": "Joao", "abbr": "Jo", "chapters": 21},
+            {"name": "Atos dos Apostolos", "abbr": "At", "chapters": 28},
             {"name": "Romanos", "abbr": "Rm", "chapters": 16},
-            {"name": "1 Coríntios", "abbr": "1Cor", "chapters": 16},
-            {"name": "2 Coríntios", "abbr": "2Cor", "chapters": 13},
-            {"name": "Gálatas", "abbr": "Gl", "chapters": 6},
-            {"name": "Efésios", "abbr": "Ef", "chapters": 6},
+            {"name": "1 Corintios", "abbr": "1Cor", "chapters": 16},
+            {"name": "2 Corintios", "abbr": "2Cor", "chapters": 13},
+            {"name": "Galatas", "abbr": "Gl", "chapters": 6},
+            {"name": "Efesios", "abbr": "Ef", "chapters": 6},
             {"name": "Filipenses", "abbr": "Fl", "chapters": 4},
             {"name": "Colossenses", "abbr": "Cl", "chapters": 4},
             {"name": "1 Tessalonicenses", "abbr": "1Ts", "chapters": 5},
             {"name": "2 Tessalonicenses", "abbr": "2Ts", "chapters": 3},
-            {"name": "1 Timóteo", "abbr": "1Tm", "chapters": 6},
-            {"name": "2 Timóteo", "abbr": "2Tm", "chapters": 4},
+            {"name": "1 Timoteo", "abbr": "1Tm", "chapters": 6},
+            {"name": "2 Timoteo", "abbr": "2Tm", "chapters": 4},
             {"name": "Tito", "abbr": "Tt", "chapters": 3},
             {"name": "Filemom", "abbr": "Fm", "chapters": 1},
             {"name": "Hebreus", "abbr": "Hb", "chapters": 13},
             {"name": "Tiago", "abbr": "Tg", "chapters": 5},
             {"name": "1 Pedro", "abbr": "1Pd", "chapters": 5},
             {"name": "2 Pedro", "abbr": "2Pd", "chapters": 3},
-            {"name": "1 João", "abbr": "1Jo", "chapters": 5},
-            {"name": "2 João", "abbr": "2Jo", "chapters": 1},
-            {"name": "3 João", "abbr": "3Jo", "chapters": 1},
+            {"name": "1 Joao", "abbr": "1Jo", "chapters": 5},
+            {"name": "2 Joao", "abbr": "2Jo", "chapters": 1},
+            {"name": "3 Joao", "abbr": "3Jo", "chapters": 1},
             {"name": "Judas", "abbr": "Jd", "chapters": 1},
             {"name": "Apocalipse", "abbr": "Ap", "chapters": 22},
         ],
     },
 }
+
+# Display names with proper accents (used by frontend)
+BIBLE_DISPLAY_NAMES = {
+    "Genesis": "Gênesis",
+    "Exodo": "Êxodo",
+    "Levitico": "Levítico",
+    "Numeros": "Números",
+    "Deuteronomio": "Deuteronômio",
+    "Josue": "Josué",
+    "Juizes": "Juízes",
+    "Cronicas": "Crônicas",
+    "Jo": "Jó",
+    "Proverbios": "Provérbios",
+    "Cantico dos Canticos": "Cântico dos Cânticos",
+    "Eclesiastico": "Eclesiástico",
+    "Isaias": "Isaías",
+    "Lamentacoes": "Lamentações",
+    "Amos": "Amós",
+    "Joao": "João",
+    "Atos dos Apostolos": "Atos dos Apóstolos",
+    "Corintios": "Coríntios",
+    "Galatas": "Gálatas",
+    "Efesios": "Efésios",
+    "Tessalonicenses": "Tessalonicenses",
+    "Timoteo": "Timóteo",
+}
+
+
+def get_display_name(name: str) -> str:
+    """Get display name with proper accents."""
+    return BIBLE_DISPLAY_NAMES.get(name, name)
 
 
 @router.get("/books", response_model=dict)
@@ -101,11 +133,21 @@ async def get_bible_books(
 
     if testament == "old" or testament is None:
         for book in books_data.get("old_testament", []):
-            result.append({**book, "testament": "old"})
+            result.append({
+                "name": get_display_name(book["name"]),
+                "abbr": book["abbr"],
+                "chapters": book["chapters"],
+                "testament": "old"
+            })
 
     if testament == "new" or testament is None:
         for book in books_data.get("new_testament", []):
-            result.append({**book, "testament": "new"})
+            result.append({
+                "name": get_display_name(book["name"]),
+                "abbr": book["abbr"],
+                "chapters": book["chapters"],
+                "testament": "new"
+            })
 
     return {
         "success": True,
@@ -146,7 +188,7 @@ async def get_bible_passage(
             detail=f"Book '{found_book['name']}' has only {found_book['chapters']} chapters",
         )
 
-    reference = f"{found_book['name']} {chapter}"
+    reference = f"{get_display_name(found_book['name'])} {chapter}"
     if verses:
         reference += f":{verses}"
 
@@ -154,7 +196,7 @@ async def get_bible_passage(
         "success": True,
         "data": {
             "reference": reference,
-            "book": found_book["name"],
+            "book": get_display_name(found_book["name"]),
             "chapter": chapter,
             "verses": verses or "all",
             "language": lang.value,
